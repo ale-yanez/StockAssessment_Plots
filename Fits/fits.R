@@ -154,6 +154,6 @@ p_1 <- ggarrange(p1, p2, p3,
 #plot <- ggarrange(p_1, p_2, ncol = 1, nrow = 2, align = "v", common.legend = TRUE, legend = "bottom")
 
 
-ggexport(p_1, filename = "Fig1.pdf", width=7.5, height=6, dpi=300)
+ggexport(p_1, filename = "Fig1.pdf", width=6.5, height=8, dpi=300)
 
 
