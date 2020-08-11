@@ -98,11 +98,22 @@ p1 <-  ggplot(NULL, aes(x=yrs)) +
 
 p1
 
-# op<-par(no.readonly=TRUE)
-# ps.options(horizontal=F,bg="white",onefile=FALSE,paper="special")
-# postscript("FigsEstatus/Fig1.eps",height=5, width=7.5) 
-# p1
-# dev.off()
+
+p1_2 <-  ggplot(NULL, aes(x=yrs)) +
+  geom_point(aes(y= obsD, colour="Observado"), size = 2, shape = 21) +
+  geom_line(aes(y= predD, colour="Estimado")) +
+  geom_errorbar(aes(ymin = obsD95i, ymax = obsD95s), colour='black', width=0.6) +
+  scale_colour_manual(name='', values=c('Estimado'='royalblue3', 'Observado'='black'), guide='legend') +
+  guides(colour = guide_legend(override.aes = list(linetype=c(1,0), shape=c(NA, 21)))) +
+  
+  xlab('Años') + scale_x_continuous(breaks=round(seq(min(yrs), 2020, by = 5),1)) +
+  ylab('Desembarque (t)') + 
+  theme_bw() + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), axis.text=element_text(size=8)) +
+  theme(legend.position = 'bottom')  + theme(legend.title=element_blank())
+
+p1_2
+
+
 
 # Indice de Abundncia ####
 
@@ -120,11 +131,6 @@ p2 <-  ggplot(NULL, aes(x=yrs)) +
 
 p2
 
-# op<-par(no.readonly=TRUE)
-# ps.options(horizontal=F,bg="white",onefile=FALSE,paper="special")
-# postscript("FigsEstatus/Fig2.eps",height=5, width=7.5) 
-# p2
-# dev.off()
 
 #  Crucero ####
 
@@ -142,18 +148,14 @@ p3 <-  ggplot(NULL, aes(x=yrs)) +
 
 p3
 
-# op<-par(no.readonly=TRUE)
-# ps.options(horizontal=F,bg="white",onefile=FALSE,paper="special")
-# postscript("FigsEstatus/Fig3.eps",height=5, width=7.5) 
-# p3
-# dev.off()
-
 
 p_1 <- ggarrange(p1, p2, p3,
                  ncol = 1, nrow = 3, align = "v")
-#plot <- ggarrange(p_1, p_2, ncol = 1, nrow = 2, align = "v", common.legend = TRUE, legend = "bottom")
+plot <- ggarrange(p1_2, p2, p3,
+                  ncol = 1, nrow = 3, align = "v", common.legend = TRUE, legend = "bottom")
 
 
 ggexport(p_1, filename = "Fig1.pdf", width=6.5, height=8, dpi=300)
+ggexport(plot, filename = "Fig1_2.pdf", width=6.5, height=8, dpi=300)
 
 
