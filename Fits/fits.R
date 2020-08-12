@@ -241,3 +241,83 @@ p2
 ggexport(p2, filename = "Fig3_TallasH_flo.pdf")
 
 
+# Composición de tallas Crucero ####
+
+# Machos Crucero
+
+df_mcruobs <- data.frame(out1$pobs_mcru)
+names <- c(tallas)
+colnames(df_mcruobs) <- names
+df_mcruobs$yr <- as.factor(yrs)
+df_mcruobs <- df_mcruobs[-c(1:14, 16, 26), ]
+
+d_mcruobs <- melt(df_mcruobs)
+colnames(d_mcruobs) <- c('yr', 'Tallas', 'value')
+
+#Adding fits
+df_mcruest <- data.frame(out1$ppred_mcru)
+names <- c(tallas)
+colnames(df_mcruest) <- names
+df_mcruest$yr <- as.factor(yrs)
+df_mcruest <- df_mcruest[-c(1:14, 16, 26), ]
+
+dd_mcruest <- melt(df_mcruest)
+colnames(dd_mcruest) <- c('yr2', 'Tallas2', 'value2')
+
+d_mcru <- data.frame(d_mcruobs$yr, d_mcruobs$Tallas, d_mcruobs$value, dd_mcruest$value2)
+colnames(d_mcru) <- c('yrs', 'Tallas', 'pobs', 'ppred')
+
+#Plotting
+p3 <- ggplot(data=d_mcru, aes(x=Tallas, y=pobs)) +
+  geom_bar(stat="identity", colour='grey') + 
+  geom_line(data=d_mcru, aes(x=as.numeric(Tallas), y=ppred, colour = 'red')) + 
+  #scale_x_discrete('Tallas', breaks = seq(10, 52, by= 6)) +
+  xlab('Tallas') + ylab('Proporción') + theme_bw() + theme(legend.position ='none') + 
+  theme(panel.grid.major = element_blank(),panel.grid.minor = element_blank(),axis.text=element_text(size=8))
+
+p3 <- p3 + facet_wrap(~ yrs, dir = 'v', scales = 'free') + scale_x_discrete('Tallas', breaks = seq(10, 52, by= 6)) + scale_y_continuous(limits=c(0,0.13))
+p3
+
+ggexport(p3, filename = "Fig4_TallasM_cru.pdf")
+
+
+# Hembras Crucero
+
+df_hcruobs <- data.frame(out1$pobs_hcru)
+names <- c(tallas)
+colnames(df_hcruobs) <- names
+df_hcruobs$yr <- as.factor(yrs)
+df_hcruobs <- df_hcruobs[-c(1:14, 16, 26), ]
+
+d_hcruobs <- melt(df_hcruobs)
+colnames(d_hcruobs) <- c('yr', 'Tallas', 'value')
+
+#Adding fits
+df_hcruest <- data.frame(out1$ppred_hcru)
+names <- c(tallas)
+colnames(df_hcruest) <- names
+df_hcruest$yr <- as.factor(yrs)
+df_hcruest <- df_hcruest[-c(1:14, 16, 26), ]
+
+dd_hcruest <- melt(df_hcruest)
+colnames(dd_hcruest) <- c('yr2', 'Tallas2', 'value2')
+
+d_hcru <- data.frame(d_hcruobs$yr, d_hcruobs$Tallas, d_hcruobs$value, dd_hcruest$value2)
+colnames(d_hcru) <- c('yrs', 'Tallas', 'pobs', 'ppred')
+
+#Plotting
+p4 <- ggplot(data=d_hcru, aes(x=Tallas, y=pobs)) +
+  geom_bar(stat="identity", colour='grey') + 
+  geom_line(data=d_hcru, aes(x=as.numeric(Tallas), y=ppred, colour = 'red')) + 
+  #scale_x_discrete('Tallas', breaks = seq(10, 52, by= 6)) +
+  xlab('Tallas') + ylab('Proporción') + theme_bw() + theme(legend.position ='none') + 
+  theme(panel.grid.major = element_blank(),panel.grid.minor = element_blank(),axis.text=element_text(size=8))
+
+p4 <- p4 + facet_wrap(~ yrs, dir = 'v', scales = 'free') + scale_x_discrete('Tallas', breaks = seq(10, 52, by= 6)) + scale_y_continuous(limits=c(0,0.22))
+p4
+
+ggexport(p4, filename = "Fig5_TallasH_cru.pdf")
+
+
+
+
