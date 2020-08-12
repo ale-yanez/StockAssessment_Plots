@@ -401,3 +401,41 @@ plot4 <- ggarrange(p7, p8, ncol = 1, nrow = 2, align = "v", common.legend = TRUE
 ggexport(plot3, filename = "Fig7_1.pdf", width=9, height=6, dpi=300)
 ggexport(plot4, filename = "Fig7_2.pdf", width=6.5, height=8, dpi=300)
 
+
+# Selectividad ####
+
+df_Sel <- data.frame(c(1:11), out1$Sflom_age[1,], out1$Sfloh_age[1,], out1$Scrum_age[1,], out1$Scruh_age[1,])
+colnames(df_Sel) <- c('ages', 'S_flom','S_floh', 'S_crum', 'S_cruh')
+
+#Plotting Flota
+
+p9 <- ggplot(df_Sel, aes(x = ages)) + 
+  geom_line(aes(y = S_flom, colour = 'Machos', linetype = 'Machos')) +
+  geom_line(aes(y = S_floh, colour = 'Hembras', linetype = 'Hembras')) +
+  scale_color_manual(name = '', values = c('black', 'black')) +     
+  scale_linetype_manual(name = '', values = c('solid', 'dotted'))
+
+p9 <- p9 + theme_bw() + 
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), axis.text=element_text(size=10)) +
+  theme(legend.title=element_blank()) + theme(legend.position = 'bottom') + theme(legend.text=element_text(size=12)) +
+  ylab('Proporción') + scale_x_continuous('Edad (años)', breaks = seq(1, 11, by= 1)) + ggtitle('Flota')
+
+p9
+
+p10 <- ggplot(df_Sel, aes(x = ages)) + 
+  geom_line(aes(y = S_crum, colour = 'Machos', linetype = 'Machos')) +
+  geom_line(aes(y = S_cruh, colour = 'Hembras', linetype = 'Hembras')) +
+  scale_color_manual(name = '', values = c('black', 'black')) + 
+  scale_linetype_manual(name = '', values = c('solid', 'dotted'))
+
+p10 <- p10 + theme_bw() + 
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), axis.text=element_text(size=8)) +
+  theme(legend.title=element_blank()) + theme(legend.position = 'bottom') + theme(legend.text=element_text(size=12)) +
+  ylab('Proporción') + scale_x_continuous('Edad (años)', breaks = seq(1, 11, by= 1)) + ggtitle('Crucero')
+
+p10
+
+psel <- ggarrange(p9, p10, ncol = 2, nrow = 1, align = "v", common.legend = TRUE, legend = "bottom")
+
+ggexport(psel, filename = "Fig8.pdf")
+
