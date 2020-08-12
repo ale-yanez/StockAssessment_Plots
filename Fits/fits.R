@@ -200,3 +200,44 @@ p1
 
 ggexport(p1, filename = "Fig2_TallasM_flo.pdf")
 
+
+# Hembras Flota
+
+df_hflobs <- data.frame(out1$pobs_hflo)
+names <- c(tallas)
+colnames(df_hflobs) <- names
+df_hflobs$yr <- as.factor(yrs)
+df_hflobs <- df_hflobs[-c(3:8, 29), ]
+
+d_hflobs <- melt(df_hflobs)
+colnames(d_hflobs) <- c('yr', 'Tallas', 'value')
+
+#Adding fits
+df_hfloest <- data.frame(out1$Ppred_hflo)
+names <- c(tallas)
+colnames(df_hfloest) <- names
+df_hfloest$yr <- as.factor(yrs)
+df_hfloest <- df_hfloest[-c(3:8, 29), ]
+
+dd_hfloest <- melt(df_hfloest)
+colnames(dd_hfloest) <- c('yr2', 'Tallas2', 'value2')
+
+d_hflo <- data.frame(d_hflobs$yr, d_hflobs$Tallas, d_hflobs$value, dd_hfloest$value2)
+colnames(d_hflo) <- c('yrs', 'Tallas', 'pobs', 'ppred')
+
+
+#Plotting
+p2 <- ggplot(data=d_hflo, aes(x=Tallas, y=pobs)) +
+  geom_bar(stat="identity", colour='grey') + 
+  geom_line(data=d_hflo, aes(x=as.numeric(Tallas), y=ppred, colour = 'red')) + 
+  #scale_x_discrete('Tallas', breaks = seq(10, 52, by= 6)) +
+  xlab('Tallas') + ylab('Proporción') + theme_bw() + theme(legend.position ='none') + 
+  theme(panel.grid.major = element_blank(),panel.grid.minor = element_blank(),axis.text=element_text(size=8))
+
+
+p2 <- p2 + facet_wrap(~ yrs, dir = 'v', scales = 'free') + scale_x_discrete('Tallas', breaks = seq(10, 52, by= 6)) + scale_y_continuous(limits=c(0,0.22))
+p2
+
+ggexport(p2, filename = "Fig3_TallasH_flo.pdf")
+
+
