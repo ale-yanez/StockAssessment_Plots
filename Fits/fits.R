@@ -27,7 +27,7 @@ names(out1)
 # Para graficar ... ####
  yrs <- out1$YRS
  nyrs <- length(yrs)
-# tallas <- seq(10,52,1)
+ tallas <- seq(10,52,1)
 # class(tallas)
 # M <- 0.3
 # Brms <- out1$BDoLP*0.4
@@ -82,7 +82,7 @@ names(out1)
 
 #FITS LAMA MODEL ####
 
-#  Desembarques ####
+#  Desembarques, CPUE y Crucero ####
 
 p1 <-  ggplot(NULL, aes(x=yrs)) +
   geom_point(aes(y= obsD, colour="Desemb Obs"), size = 2, shape = 21) +
@@ -114,8 +114,7 @@ p1_2 <-  ggplot(NULL, aes(x=yrs)) +
 p1_2
 
 
-
-# Indice de Abundncia ####
+# Indice de Abundncia ###
 
 p2 <-  ggplot(NULL, aes(x=yrs)) +
   geom_point(aes(y= obsC, colour="CPUE Obs"), size = 2, shape = 21) +
@@ -132,7 +131,7 @@ p2 <-  ggplot(NULL, aes(x=yrs)) +
 p2
 
 
-#  Crucero ####
+#  Crucero ###
 
 p3 <-  ggplot(NULL, aes(x=yrs)) +
   geom_point(aes(y= obsS, colour="Crucero Obs"), size = 2, shape = 21) +
@@ -158,4 +157,46 @@ plot <- ggarrange(p1_2, p2, p3,
 ggexport(p_1, filename = "Fig1.pdf", width=6.5, height=8, dpi=300)
 ggexport(plot, filename = "Fig1_2.pdf", width=6.5, height=8, dpi=300)
 
+
+
+# Composición de tallas Flota ####
+
+# Machos Flota
+
+df_mflobs <- data.frame(out1$pobs_mflo)
+names <- c(tallas)
+colnames(df_mflobs) <- names
+df_mflobs$yr <- as.factor(yrs)
+df_mflobs <- df_mflobs[-c(3:8, 29), ]
+
+d_mflobs <- melt(df_mflobs)
+colnames(d_mflobs) <- c('yr', 'Tallas', 'value')
+
+#Adding fits
+df_mfloest <- data.frame(out1$ppred_mflo)
+names <- c(tallas)
+colnames(df_mfloest) <- names
+df_mfloest$yr <- as.factor(yrs)
+df_mfloest <- df_mfloest[-c(3:8, 29), ]
+
+dd_mfloest <- melt(df_mfloest)
+colnames(dd_mfloest) <- c('yr2', 'Tallas2', 'value2')
+
+#Gran data frame
+d_mflo <- data.frame(d_mflobs$yr, d_mflobs$Tallas, d_mflobs$value, dd_mfloest$value2)
+head(d_mflo)
+colnames(d_mflo) <- c('yrs', 'Tallas', 'pobs', 'ppred')
+
+#Plotting
+p1 <- ggplot(data=d_mflo, aes(x=Tallas, y=pobs)) +
+  geom_bar(stat="identity", colour='grey') + 
+  geom_line(data=d_mflo, aes(x=as.numeric(Tallas), y=ppred, colour = 'red')) + 
+  #scale_x_discrete('Tallas', breaks = seq(10, 52, by= 6)) +
+  xlab('Tallas') + ylab('Proporción') + theme_bw() + theme(legend.position ='none') + 
+  theme(panel.grid.major = element_blank(),panel.grid.minor = element_blank(),axis.text=element_text(size=8))
+
+p1 <- p1 + facet_wrap(~ yrs, dir = 'v', scales='free')  + scale_x_discrete('Tallas', breaks = seq(10, 52, by= 6)) + scale_y_continuous(limits=c(0,0.16))
+p1
+
+ggexport(p1, filename = "Fig2_TallasM_flo.pdf")
 
