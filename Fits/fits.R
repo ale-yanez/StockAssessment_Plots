@@ -1,6 +1,4 @@
 # Funciones y Directorios ####
-rm(list=ls())
-
 library(ggplot2)
 library(reshape)
 library(ggpubr)
@@ -19,8 +17,7 @@ dir.1<-'~/GitHub/StockAssessment_Plots/Fits/'
 
 setwd(dir.1)
 dir()
-
-out1 <- read.admb("LAM_nor2008")
+out1 <- read.admb("../data/LAM_nor2008")
 names(out1)
 
 
