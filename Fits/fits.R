@@ -45,14 +45,14 @@ names(out1)
  predC         <- out1$CPUE[2,]
  predS         <- out1$BCRU[2,]
 # 
-# Lobs_mf       <- out1$Lm_obs_pred[1,] ; Lobs_mf[Lobs_mf <=1]  <-NA
-# Lpred_mf      <- out1$Lm_obs_pred[2,] ; Lpred_mf[Lpred_mf <=1]  <-NA
-# Lobs_hf       <- out1$Lh_obs_pred[1,] ; Lobs_hf[Lobs_hf <=1]  <-NA
-# Lpred_hf      <- out1$Lh_obs_pred[2,] ; Lpred_hf[Lpred_hf <=1]  <-NA
-# Lobs_mc       <- out1$Lmc_obs_est[1,] ; Lobs_mc[Lobs_mc <=1]  <-NA
-# Lpred_mc      <- out1$Lmc_obs_est[2,] ; Lpred_mc[Lpred_mc <=1]  <-NA
-# Lobs_hc       <- out1$Lhc_obs_est[1,] ; Lobs_hc[Lobs_hc <=1]  <-NA
-# Lpred_hc      <- out1$Lhc_obs_est[2,] ; Lpred_hc[Lpred_hc <=1]  <-NA
+ Lobs_mf       <- out1$Lm_obs_pred[1,] ; Lobs_mf[Lobs_mf <=1]  <-NA
+ Lpred_mf      <- out1$Lm_obs_pred[2,] ; Lpred_mf[Lpred_mf <=1]  <-NA
+ Lobs_hf       <- out1$Lh_obs_pred[1,] ; Lobs_hf[Lobs_hf <=1]  <-NA
+ Lpred_hf      <- out1$Lh_obs_pred[2,] ; Lpred_hf[Lpred_hf <=1]  <-NA
+ Lobs_mc       <- out1$Lmc_obs_est[1,] ; Lobs_mc[Lobs_mc <=1]  <-NA
+ Lpred_mc      <- out1$Lmc_obs_est[2,] ; Lpred_mc[Lpred_mc <=1]  <-NA
+ Lobs_hc       <- out1$Lhc_obs_est[1,] ; Lobs_hc[Lobs_hc <=1]  <-NA
+ Lpred_hc      <- out1$Lhc_obs_est[2,] ; Lpred_hc[Lpred_hc <=1]  <-NA
 # 
 # 
 # 
@@ -319,5 +319,85 @@ p4
 ggexport(p4, filename = "Fig5_TallasH_cru.pdf")
 
 
+# Tallas Medias Flota ####
 
+#Machos
+df_flo<-data.frame(cbind(yrs, Lobs_mf, Lpred_mf, Lobs_hf, Lpred_hf))
+colnames(df_flo) <- c('yrs', 'Lobs_mf', 'Lest_m', 'Lobs_hf', 'Lest_h')
+
+p5 <-  ggplot(df_flo, aes(x=yrs)) +
+  geom_point(aes(y= Lobs_mf, colour="Talla Media Obs."), size = 2, shape = 21) +
+  geom_line(aes(y= Lest_m, colour="Talla Media Est.")) +
+  scale_colour_manual(name='', values=c('Talla Media Est.'='royalblue3', 'Talla Media Obs.'='black'), guide='legend') +
+  guides(colour = guide_legend(override.aes = list(linetype=c(1,0), shape=c(NA, 21)))) +
+
+  xlab('Años') + scale_x_continuous(breaks=round(seq(min(yrs), 2020, by = 5),1)) +
+  ylab('LC machos (mm)') + ylim(24, 40) + 
+  #scale_y_continuous(breaks=round(seq(24, 40, by = 4),1)) +
+  theme_bw() + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), axis.text=element_text(size=10)) +
+  theme(legend.position = 'bottom')  + theme(legend.title=element_blank()) + theme(legend.text = element_text(size = 10))
+
+p5
+
+# Hembras
+p6 <-  ggplot(df_flo, aes(x=yrs)) +
+  geom_point(aes(y= Lobs_hf, colour="Talla Media Obs."), size = 2, shape = 21) +
+  geom_line(aes(y= Lest_h, colour="Talla Media Est.")) +
+  scale_colour_manual(name='', values=c('Talla Media Est.'='royalblue3', 'Talla Media Obs.'='black'), guide='legend') +
+  guides(colour = guide_legend(override.aes = list(linetype=c(1,0), shape=c(NA, 21)))) +
+  
+  xlab('Años') + scale_x_continuous(breaks=round(seq(min(yrs), 2020, by = 5),1)) + 
+  ylab('LC hembras (mm)') + ylim(24, 40) +
+  theme_bw() + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), axis.text=element_text(size=10)) +
+  theme(legend.position = 'bottom')  + theme(legend.title=element_blank()) + theme(legend.text = element_text(size = 10))
+
+p6
+
+plot1 <- ggarrange(p5, p6, ncol = 2, nrow = 1, align = "h", common.legend = TRUE, legend = "bottom")
+plot2 <- ggarrange(p5, p6, ncol = 1, nrow = 2, align = "v", common.legend = TRUE, legend = "bottom")
+
+ggexport(plot1, filename = "Fig6_1.pdf", width=9, height=6, dpi=300)
+ggexport(plot2, filename = "Fig6_2.pdf", width=6.5, height=8, dpi=300)
+
+
+# Tallas Medias Crucero ####
+
+#Machos crucero
+
+df_cru<-data.frame(cbind(yrs, Lobs_mc, Lpred_mc, Lobs_hc, Lpred_hc))
+colnames(df_cru) <- c('yrs', 'Lobs_mc', 'Lest_m', 'Lobs_hc', 'Lest_h')
+
+p7 <-  ggplot(df_cru, aes(x=yrs)) +
+  geom_point(aes(y= Lobs_mc, colour="Talla Media Obs."), size = 2, shape = 21)+
+  geom_line(aes(y= Lest_m, colour="Talla Media Est."))+
+  scale_colour_manual(name='', values=c('Talla Media Est.'='royalblue3', 'Talla Media Obs.'='black'), guide='legend') +
+  guides(colour = guide_legend(override.aes = list(linetype=c(1,0), shape=c(NA, 21)))) +
+  
+  xlab('Años') + scale_x_continuous(breaks=round(seq(min(yrs), 2020, by = 5),1)) +
+  ylab('LC machos (mm)') + ylim(24, 40) +
+  theme_bw() + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), axis.text=element_text(size=10)) +
+  theme(legend.position = 'bottom')  + theme(legend.title=element_blank()) + theme(legend.text = element_text(size = 10))
+
+p7
+
+#Hembras crucero
+
+p8 <-  ggplot(df_cru, aes(x=yrs)) +
+  geom_point(aes(y= Lobs_hc, colour="Talla Media Obs."), size = 2, shape = 21) +
+  geom_line(aes(y= Lest_h, colour="Talla Media Est.")) +
+  scale_colour_manual(name='', values=c('Talla Media Est.'='royalblue3', 'Talla Media Obs.'='black'), guide='legend') +
+  guides(colour = guide_legend(override.aes = list(linetype=c(1,0), shape=c(NA, 21)))) +
+  
+  xlab('Años') + scale_x_continuous(breaks=round(seq(min(yrs), 2020, by = 5),1)) +
+  ylab('LC hembras (mm)') + ylim(24,40) + 
+  theme_bw() + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), axis.text=element_text(size=10)) +
+  theme(legend.position = 'bottom')  + theme(legend.title=element_blank()) + theme(legend.text = element_text(size = 10))
+
+p8
+
+plot3 <- ggarrange(p7, p8, ncol = 2, nrow = 1, align = "v", common.legend = TRUE, legend = "bottom")
+plot4 <- ggarrange(p7, p8, ncol = 1, nrow = 2, align = "v", common.legend = TRUE, legend = "bottom")
+
+ggexport(plot3, filename = "Fig7_1.pdf", width=9, height=6, dpi=300)
+ggexport(plot4, filename = "Fig7_2.pdf", width=6.5, height=8, dpi=300)
 
