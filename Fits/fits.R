@@ -6,6 +6,7 @@ library(devtools)
 
 devtools::source_url("https://github.com/ale-yanez/RFunctions/blob/master/read.admb.R?raw=TRUE")
 
+#out1 <- read.admb("../LAM_nor2008")
 out1 <- read.admb("../data/LAM_nor2008")
 
 # Para graficar ... ####
