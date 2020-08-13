@@ -18,9 +18,9 @@ std2 <- read.table('../data/LAM_nor2003.std', header=T, sep="", na="NA", fill=T)
 # nyrs <- length(yrs)
 # tallas <- seq(10,52,1)
 # class(tallas)
-# M <- 0.3
+ M <- 0.3
  Brms <- out1$BDoLP*0.4
-# Frms <- out1$Fpbr[3]
+ Frms <- out1$Fpbr[3]
 # B0 <- out1$BDoLP
 # 
 
@@ -34,10 +34,11 @@ std2 <- read.table('../data/LAM_nor2003.std', header=T, sep="", na="NA", fill=T)
  BT_est2       <- subset(std2,name=='BT')$value
  BD_est1       <- subset(std1,name=='BD')$value
  BD_est2       <- subset(std2,name=='BD')$value
-# F_est1        <- exp(subset(std1,name=='log_Fh')$value)
-# F_est2        <- exp(subset(std2,name=='log_Fh')$value)
-# #F_est1        <- out1$Fm_Fh[2,]
-# #F_est2        <- out2$Fm_Fh[2,]
+ F_est1        <- exp(subset(std1,name=='log_Fh')$value)
+ F_est2        <- exp(subset(std2,name=='log_Fh')$value)
+ F_est1_b      <- exp(subset(std1,name=='log_Fh')$value) + exp(subset(std1,name=='log_Fm')$value)
+ F_est2_b      <- exp(subset(std2,name=='log_Fh')$value) + exp(subset(std2,name=='log_Fm')$value)
+ 
  
 # # std 
  stdRec1       <- subset(std1,name=='Restim')$std
@@ -48,8 +49,11 @@ std2 <- read.table('../data/LAM_nor2003.std', header=T, sep="", na="NA", fill=T)
  stdBT2        <- subset(std2,name=='BT')$std
  stdBD1        <- subset(std1,name=='BD')$std
  stdBD2        <- subset(std2,name=='BD')$std
-# stdF1         <- subset(std1,name=='log_Fh')$std
-# stdF2         <- subset(std2,name=='log_Fh')$std
+ stdF1         <- subset(std1,name=='log_Fh')$std
+ stdF2         <- subset(std2,name=='log_Fh')$std
+ stdF1_b       <- subset(std1,name=='log_Fh')$std + subset(std1,name=='log_Fm')$std
+ stdF2_b       <- subset(std2,name=='log_Fh')$std + subset(std2,name=='log_Fm')$std
+  
  
 # # Confidence Intervals
  rec1_lwr      <-Rec_est1-1.96*stdRec1
@@ -68,10 +72,14 @@ std2 <- read.table('../data/LAM_nor2003.std', header=T, sep="", na="NA", fill=T)
  BD1_upr       <-BD_est1+1.96*stdBD1
  BD2_lwr       <-BD_est2-1.96*stdBD2
  BD2_upr       <-BD_est2+1.96*stdBD2
-# F1_lwr        <-exp(log(F_est1)-1.96*stdF1)
-# F1_upr        <-exp(log(F_est1)+1.96*stdF1)
-# F2_lwr        <-exp(log(F_est2)-1.96*stdF2)
-# F2_upr        <-exp(log(F_est2)+1.96*stdF2)
+ F1_lwr        <-exp(log(F_est1)-1.96*stdF1)
+ F1_upr        <-exp(log(F_est1)+1.96*stdF1)
+ F2_lwr        <-exp(log(F_est2)-1.96*stdF2)
+ F2_upr        <-exp(log(F_est2)+1.96*stdF2)
+ F1_lwr_b        <-exp(log(F_est1_b)-1.96*stdF1_b)
+ F1_upr_b        <-exp(log(F_est1_b)+1.96*stdF1_b)
+ F2_lwr_b        <-exp(log(F_est2_b)-1.96*stdF2_b)
+ F2_upr_b        <-exp(log(F_est2_b)+1.96*stdF2_b)
 
 
 #Var Pop LAM MODEL ###
@@ -176,4 +184,56 @@ plot_B <- ggarrange(p10, p11, ncol = 1, nrow = 2, align = "v", common.legend = T
 ggexport(plot_B, filename = "VarPop2_Biom.pdf", width=8, height=6.5, dpi=300)
 
 
+# Mortalidad por Pesca ####
+
+p12 <- ggplot(data = NULL, aes(x = yrs)) + 
+  geom_line(aes(y = F_est1, colour = 'actual', linetype = 'actual')) +
+  geom_line(aes(y = c(F_est2,NA), colour = 'anterior', linetype = 'anterior')) +
+  geom_ribbon(data=NULL, aes(ymin=F1_lwr, ymax=F1_upr), fill = 'grey37', alpha = 0.4) + 
+  geom_ribbon(data=NULL, aes(ymin=c(F2_lwr,NA), ymax=c(F2_upr,NA)),fill = 'grey70', alpha = 0.4) + 
+  geom_line(aes(y = c(rep(M,36)), colour = 'M', linetype = 'M')) +
+  geom_line(aes(y = c(rep(Frms,36)), colour = 'Frms', linetype = 'Frms')) +
+  
+  scale_color_manual(name = '',
+                     values = c('royalblue3', 'red1', 'chartreuse3','black'),
+                     limits = c('actual', 'anterior', 'M', 'Frms'),
+                     breaks = c('actual', 'anterior', 'M', 'Frms')) +
+  scale_linetype_manual(name = '',
+                        values = c('solid', 'longdash', 'twodash','dotted'),
+                        limits = c('actual', 'anterior', 'M', 'Frms'),
+                        breaks = c('actual', 'anterior', 'M', 'Frms'))
+p12 <- p12 + theme_bw() + 
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), axis.text=element_text(size=8)) +
+  theme(legend.position = 'bottom') + ylab('Mortalidad por Pesca (1/años)') + xlab('Años') + 
+  scale_x_continuous(breaks=round(seq(min(yrs), 2020, by = 5),1))
+
+p12
+ggexport(p12, filename = "VarPop3_Fh.pdf", width=8, height=6.5, dpi=300)
+
+
+# Mortalidad por Pesca b ####
+
+p12_b <- ggplot(data = NULL, aes(x = yrs)) + 
+  geom_line(aes(y = F_est1_b, colour = 'actual', linetype = 'actual')) +
+  geom_line(aes(y = c(F_est2_b,NA), colour = 'anterior', linetype = 'anterior')) +
+  geom_ribbon(data=NULL, aes(ymin=F1_lwr_b, ymax=F1_upr_b), fill = 'grey37', alpha = 0.4) + 
+  geom_ribbon(data=NULL, aes(ymin=c(F2_lwr_b,NA), ymax=c(F2_upr_b,NA)),fill = 'grey70', alpha = 0.4) + 
+  geom_line(aes(y = c(rep(M,36)), colour = 'M', linetype = 'M')) +
+  geom_line(aes(y = c(rep(Frms,36)), colour = 'Frms', linetype = 'Frms')) +
+  
+  scale_color_manual(name = '',
+                     values = c('royalblue3', 'red1', 'chartreuse3','black'),
+                     limits = c('actual', 'anterior', 'M', 'Frms'),
+                     breaks = c('actual', 'anterior', 'M', 'Frms')) +
+  scale_linetype_manual(name = '',
+                        values = c('solid', 'longdash', 'twodash','dotted'),
+                        limits = c('actual', 'anterior', 'M', 'Frms'),
+                        breaks = c('actual', 'anterior', 'M', 'Frms'))
+p12_b <- p12_b + theme_bw() + 
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), axis.text=element_text(size=8)) +
+  theme(legend.position = 'bottom') + ylab('Mortalidad por Pesca (1/años)') + xlab('Años') + 
+  scale_x_continuous(breaks=round(seq(min(yrs), 2020, by = 5),1))
+
+p12_b
+ggexport(p12_b, filename = "VarPop3_Ftot.pdf", width=8, height=6.5, dpi=300)
 
