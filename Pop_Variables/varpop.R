@@ -19,7 +19,7 @@ std2 <- read.table('../data/LAM_nor2003.std', header=T, sep="", na="NA", fill=T)
 # tallas <- seq(10,52,1)
 # class(tallas)
 # M <- 0.3
-# Brms <- out1$BDoLP*0.4
+ Brms <- out1$BDoLP*0.4
 # Frms <- out1$Fpbr[3]
 # B0 <- out1$BDoLP
 # 
@@ -30,10 +30,10 @@ std2 <- read.table('../data/LAM_nor2003.std', header=T, sep="", na="NA", fill=T)
  Rec_est2      <- subset(std2,name=='Restim')$value
  desvRec1      <- subset(std1,name=='log_dev_Ro')$value
  desvRec2      <- subset(std2,name=='dev_log_Ro')$value
-# BT_est1       <- subset(std1,name=='BT')$value
-# BT_est2       <- subset(std2,name=='BT')$value
-# BD_est1       <- subset(std1,name=='BD')$value
-# BD_est2       <- subset(std2,name=='BD')$value
+ BT_est1       <- subset(std1,name=='BT')$value
+ BT_est2       <- subset(std2,name=='BT')$value
+ BD_est1       <- subset(std1,name=='BD')$value
+ BD_est2       <- subset(std2,name=='BD')$value
 # F_est1        <- exp(subset(std1,name=='log_Fh')$value)
 # F_est2        <- exp(subset(std2,name=='log_Fh')$value)
 # #F_est1        <- out1$Fm_Fh[2,]
@@ -44,10 +44,10 @@ std2 <- read.table('../data/LAM_nor2003.std', header=T, sep="", na="NA", fill=T)
  stdRec2       <- subset(std2,name=='Restim')$std
  stddesvRec1   <- subset(std1,name=='log_dev_Ro')$std
  stddesvRec2   <- subset(std2,name=='dev_log_Ro')$std
-# stdBT1        <- subset(std1,name=='BT')$std
-# stdBT2        <- subset(std2,name=='BT')$std
-# stdBD1        <- subset(std1,name=='BD')$std
-# stdBD2        <- subset(std2,name=='BD')$std
+ stdBT1        <- subset(std1,name=='BT')$std
+ stdBT2        <- subset(std2,name=='BT')$std
+ stdBD1        <- subset(std1,name=='BD')$std
+ stdBD2        <- subset(std2,name=='BD')$std
 # stdF1         <- subset(std1,name=='log_Fh')$std
 # stdF2         <- subset(std2,name=='log_Fh')$std
  
@@ -60,14 +60,14 @@ std2 <- read.table('../data/LAM_nor2003.std', header=T, sep="", na="NA", fill=T)
  desvrec1_upr  <- desvRec1+1.96*stddesvRec1
  desvrec2_lwr  <- desvRec2-1.96*stddesvRec2
  desvrec2_upr  <- desvRec2+1.96*stddesvRec2
-# BT1_lwr       <-BT_est1-1.96*stdBT1
-# BT1_upr       <-BT_est1+1.96*stdBT1
-# BT2_lwr       <-BT_est2-1.96*stdBT2
-# BT2_upr       <-BT_est2+1.96*stdBT2
-# BD1_lwr       <-BD_est1-1.96*stdBD1
-# BD1_upr       <-BD_est1+1.96*stdBD1
-# BD2_lwr       <-BD_est2-1.96*stdBD2
-# BD2_upr       <-BD_est2+1.96*stdBD2
+ BT1_lwr       <-BT_est1-1.96*stdBT1
+ BT1_upr       <-BT_est1+1.96*stdBT1
+ BT2_lwr       <-BT_est2-1.96*stdBT2
+ BT2_upr       <-BT_est2+1.96*stdBT2
+ BD1_lwr       <-BD_est1-1.96*stdBD1
+ BD1_upr       <-BD_est1+1.96*stdBD1
+ BD2_lwr       <-BD_est2-1.96*stdBD2
+ BD2_upr       <-BD_est2+1.96*stdBD2
 # F1_lwr        <-exp(log(F_est1)-1.96*stdF1)
 # F1_upr        <-exp(log(F_est1)+1.96*stdF1)
 # F2_lwr        <-exp(log(F_est2)-1.96*stdF2)
@@ -122,5 +122,58 @@ p9
 
 plot_rec <- ggarrange(p8, p9, ncol = 1, nrow = 2, align = "v", common.legend = TRUE, legend = "bottom")
 
-ggexport(plot_rec, filename = "VarPop1_Rec.pdf")
+ggexport(plot_rec, filename = "VarPop1_Rec.pdf", width=8, height=6.5, dpi=300)
+
+
+# Biomasa Total ####
+
+p10 <- ggplot(data = NULL, aes(x = yrs)) + 
+  geom_line(aes(y = BT_est1, colour = 'actual', linetype = 'actual')) +
+  geom_line(aes(y = c(BT_est2,NA), colour = 'anterior', linetype = 'anterior')) +
+  geom_ribbon(data=NULL, aes(ymin=BT1_lwr, ymax=BT1_upr), fill = 'grey37', alpha = 0.4) + 
+  geom_ribbon(data=NULL, aes(ymin=c(BT2_lwr,NA), ymax=c(BT2_upr,NA)),fill = 'grey70', alpha = 0.4) + 
+  geom_line(aes(y = c(rep(1,36)), colour = 'Brms', linetype = '')) +
+  scale_color_manual(name = '',
+                     values = c('royalblue3', 'red1', 'chartreuse4'),
+                     limits = c('actual', 'anterior', 'Brms'),
+                     breaks = c('actual', 'anterior', 'Brms')) +
+  scale_linetype_manual(name = '',
+                        values = c('solid', 'longdash', 'twodash'),
+                        limits = c('actual', 'anterior', 'Brms'),
+                        breaks = c('actual', 'anterior', 'Brms'))
+p10 <- p10 + theme_bw() + 
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), axis.text=element_text(size=8)) +
+  theme(legend.position = 'bottom') + ylab('Biomasa Total (t)') + xlab('Años') + 
+  scale_x_continuous(breaks=round(seq(min(yrs), 2020, by = 5),1))
+
+p10
+
+
+# Biomasa Desovante ####
+
+p11 <- ggplot(data = NULL, aes(x = yrs)) + 
+  geom_line(aes(y = BD_est1, colour = 'actual', linetype = 'actual')) +
+  geom_line(aes(y = c(BD_est2,NA), colour = 'anterior', linetype = 'anterior')) +
+  geom_ribbon(data=NULL, aes(ymin=BD1_lwr, ymax=BD1_upr), fill = 'grey37', alpha = 0.4) + 
+  geom_ribbon(data=NULL, aes(ymin=c(BD2_lwr,NA), ymax=c(BD2_upr,NA)),fill = 'grey70', alpha = 0.4) + 
+  geom_line(aes(y = c(rep(Brms,36)), colour = 'Brms', linetype = 'Brms')) +
+  scale_color_manual(name = '',
+                     values = c('royalblue3', 'red1', 'chartreuse4'),
+                     limits = c('actual', 'anterior', 'Brms'),
+                     breaks = c('actual', 'anterior', 'Brms')) +
+  scale_linetype_manual(name = '',
+                        values = c('solid', 'longdash', 'twodash'),
+                        limits = c('actual', 'anterior', 'Brms'),
+                        breaks = c('actual', 'anterior', 'Brms'))
+p11 <- p11 + theme_bw() + 
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), axis.text=element_text(size=8)) +
+  theme(legend.position = 'bottom') + ylab('Biomasa Desovante (t)') + xlab('Años') + 
+  scale_x_continuous(breaks=round(seq(min(yrs), 2020, by = 5),1))
+
+p11
+
+plot_B <- ggarrange(p10, p11, ncol = 1, nrow = 2, align = "v", common.legend = TRUE, legend = "bottom")
+ggexport(plot_B, filename = "VarPop2_Biom.pdf", width=8, height=6.5, dpi=300)
+
+
 
