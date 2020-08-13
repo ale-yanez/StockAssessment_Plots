@@ -2,46 +2,27 @@
 library(ggplot2)
 library(reshape)
 library(ggpubr)
-library(RCurl)
 library(devtools)
 
-#source('~/Documents/Rwork/Functions/read.admb.R')
 devtools::source_url("https://github.com/ale-yanez/RFunctions/blob/master/read.admb.R?raw=TRUE")
 
-dir.1<-'~/GitHub/StockAssessment_Plots/Fits/'
-# dir.2<-'~/Documents/ADMwork/IFOP/2019/Lama_model/Cons_2003/norte/Lamnor2003/'
-# dir.3<-'~/Documents/ADMwork/IFOP/2020/Lama_model/Estatus_2008/norte/Lamnor2008/'
-
-
-# Lee Reportes actual y anterior ####
-
-setwd(dir.1)
-dir()
 out1 <- read.admb("../data/LAM_nor2008")
-names(out1)
-
 
 # Para graficar ... ####
  yrs <- out1$YRS
  nyrs <- length(yrs)
  tallas <- seq(10,52,1)
-# class(tallas)
-# M <- 0.3
-# Brms <- out1$BDoLP*0.4
-# Frms <- out1$Fpbr[3]
-# B0 <- out1$BDoLP
-# 
-# #Observado
+
+ # #Observado
  obsD <- out1$Desemb[1,]
  obsC <- out1$CPUE[1,] ; obsC[obsC <= 0.01]   <-NA
  obsS <- out1$BCRU[1,] ; obsS[obsS <= 1]  <-NA
-# 
-# 
+
 # #predichos y estimados 
  predD         <- out1$Desemb[2,]
  predC         <- out1$CPUE[2,]
  predS         <- out1$BCRU[2,]
-# 
+
  Lobs_mf       <- out1$Lm_obs_pred[1,] ; Lobs_mf[Lobs_mf <=1]  <-NA
  Lpred_mf      <- out1$Lm_obs_pred[2,] ; Lpred_mf[Lpred_mf <=1]  <-NA
  Lobs_hf       <- out1$Lh_obs_pred[1,] ; Lobs_hf[Lobs_hf <=1]  <-NA
@@ -50,27 +31,12 @@ names(out1)
  Lpred_mc      <- out1$Lmc_obs_est[2,] ; Lpred_mc[Lpred_mc <=1]  <-NA
  Lobs_hc       <- out1$Lhc_obs_est[1,] ; Lobs_hc[Lobs_hc <=1]  <-NA
  Lpred_hc      <- out1$Lhc_obs_est[2,] ; Lpred_hc[Lpred_hc <=1]  <-NA
-# 
-# 
-# 
-# 
-# # std 
-# stdpredD      <- subset(std1,name=="pred_Desemb")$std
-# stdpredC      <- subset(std1,name=="pred_CPUE")$std
-# stdpredS      <- subset(std1,name=="pred_Bcru")$std
-# 
-# stdL_mf       <- subset(std1,name=="Lmf_pred")$std
-# stdL_hf       <- subset(std1,name=="Lhf_pred")$std
-# stdL_mc       <- subset(std1,name=="Lmc_pred")$std
-# stdL_hc       <- subset(std1,name=="Lhc_pred")$std
-# 
-# 
-# # Confidence Intervals
+
+# Confidence Intervals
  cvdes         <- rep(0.1,nyrs)
  cvcpue        <- rep(0.15,nyrs)
  cvsurv        <- rep(0.30,nyrs)
-# 
-# 
+
  obsD95i   <- obsD*exp(-1.96*cvdes); obsD95s <- obsD*exp(1.96*cvdes)
  obsC95i   <- obsC*exp(-1.96*cvcpue); obsC95s <-obsC*exp(1.96*cvcpue)
  obsS95i   <- obsS*exp(-1.96*cvsurv); obsS95s <-obsS*exp(1.96*cvsurv)
@@ -435,4 +401,3 @@ p10
 psel <- ggarrange(p9, p10, ncol = 2, nrow = 1, align = "v", common.legend = TRUE, legend = "bottom")
 
 ggexport(psel, filename = "Fig8.pdf")
-
