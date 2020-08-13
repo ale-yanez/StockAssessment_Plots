@@ -1,8 +1,13 @@
 # Funciones y Directorios ####
+library(rstudioapi)
 library(ggplot2)
 library(reshape)
 library(ggpubr)
 library(devtools)
+
+# Getting the path of your current open file
+current_path = rstudioapi::getActiveDocumentContext()$path 
+setwd(dirname(current_path ))
 
 devtools::source_url("https://github.com/ale-yanez/RFunctions/blob/master/read.admb.R?raw=TRUE")
 
