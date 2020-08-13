@@ -15,16 +15,10 @@ std2 <- read.table('../data/LAM_nor2003.std', header=T, sep="", na="NA", fill=T)
 
 # Para graficar ... ####
  yrs <- out1$YRS
-# nyrs <- length(yrs)
-# tallas <- seq(10,52,1)
-# class(tallas)
  M <- 0.3
  Brms <- out1$BDoLP*0.4
  Frms <- out1$Fpbr[3]
-# B0 <- out1$BDoLP
-# 
 
- 
 # #predichos y estimados 
  Rec_est1      <- subset(std1,name=='Restim')$value
  Rec_est2      <- subset(std2,name=='Restim')$value
@@ -39,7 +33,6 @@ std2 <- read.table('../data/LAM_nor2003.std', header=T, sep="", na="NA", fill=T)
  F_est1_b      <- exp(subset(std1,name=='log_Fh')$value) + exp(subset(std1,name=='log_Fm')$value)
  F_est2_b      <- exp(subset(std2,name=='log_Fh')$value) + exp(subset(std2,name=='log_Fm')$value)
  
- 
 # # std 
  stdRec1       <- subset(std1,name=='Restim')$std
  stdRec2       <- subset(std2,name=='Restim')$std
@@ -53,7 +46,6 @@ std2 <- read.table('../data/LAM_nor2003.std', header=T, sep="", na="NA", fill=T)
  stdF2         <- subset(std2,name=='log_Fh')$std
  stdF1_b       <- subset(std1,name=='log_Fh')$std + subset(std1,name=='log_Fm')$std
  stdF2_b       <- subset(std2,name=='log_Fh')$std + subset(std2,name=='log_Fm')$std
-  
  
 # # Confidence Intervals
  rec1_lwr      <-Rec_est1-1.96*stdRec1
